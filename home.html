@@ -173,6 +173,22 @@
       }
     }
 
+    @keyframes floatUp {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.box.float {
+  animation: floatUp 0.6s ease;
+}
+
     .box:hover {
       transform: scale(1.05);
       background-color: #e2e2e2;
@@ -345,6 +361,17 @@
       })
       .catch(err => console.error("Error loading content:", err));
   }
+
+    <script>
+  document.querySelectorAll('.box').forEach(box => {
+    box.addEventListener('click', () => {
+      box.classList.remove('float'); 
+      void box.offsetWidth; 
+      box.classList.add('float');
+    });
+  });
+</script>
+
 </script>
 </body>
 </html>
