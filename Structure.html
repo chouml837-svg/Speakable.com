@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Structure</title>
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: Arial, sans-serif;
+    background: url('struc.png') no-repeat center center fixed;
+    background-size: cover;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    transition: background 0.5s ease-in-out;
+  }
+
+  .wrapper {
+  width: 100%;
+  max-width: 350px;
+  padding: 20px;
+  text-align: center;
+  position: relative;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 1s ease-in-out;
+}
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .profile-pic {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-color: #ddd;
+    margin: 0 auto 10px;
+    position: relative;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+    cursor: pointer;
+  }
+
+  .profile-pic::after {
+    content: "+";
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: #fff;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    border: 2px solid #ccc;
+    font-weight: bold;
+    color: #555;
+  }
+
+  input[type="file"] {
+    display: none;
+  }
+
+  input[type="text"] {
+    width: 100%;
+    padding: 15px;
+    margin-top: 10px;
+    font-size: 16px;
+    box-sizing: border-box;
+    border-radius: 20px;
+    border: 1px solid #ccc;
+    text-align: center;
+  }
+
+  .suggestions {
+    margin-top: 10px;
+  }
+
+  .suggestions div {
+    background: #fff;
+    padding: 10px;
+    border-radius: 20px;
+    margin: 5px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+
+  .suggestions div:hover {
+    background: #f0f0f0;
+  }
+
+  .remove-btn {
+    background: transparent;
+    border: none;
+    color: red;
+    font-size: 18px;
+    cursor: pointer;
+  }
+
+  .gender-select {
+    margin: 15px 0;
+  }
+
+  .note {
+    font-size: 12px;
+    color: #888;
+    margin: 10px 0;
+  }
+
+  .btn-primary, .btn-secondary {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+
+  .btn-primary {
+    background-color: LightSteelBlue;
+    color: white;
+  }
+
+  .btn-primary:hover {
+    background-color: SteelBlue;
+  }
+
+  .btn-secondary {
+    background-color: #ccc;
+    color: #333;
+  }
+
+  .btn-secondary:hover {
+    background-color: #bbb;
+  }
+
+  .alert-box {
+    background-color: #f44336;
+    color: white;
+    padding: 10px;
+    border-radius: 20px;
+    margin-top: 10px;
+    display: none;
+  }
+</style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="profile-pic" id="profilePreview" onclick="document.getElementById('imageInput').click()"></div>
+    <input type="file" id="imageInput" accept="image/*" />
+
+    <input id="nickname" type="text" placeholder="" maxlength="20" oninput="showSuggestions()" />
+
+    <div class="suggestions" id="suggestions"></div>
+
+    <div class="gender-select">
+      <label><input type="radio" name="gender" value="male"> Male</label>
+      <label><input type="radio" name="gender" value="female"> Female</label>
+    </div>
+
+    <div class="note">
+      Note: We do not collect any personal data.<br>
+      This is for app customization only.
+    </div>
+
+    <button class="btn-primary" onclick="handleContinue()">Save and continue</button>
+    <button class="btn-secondary" onclick="skip()">Maybe later</button>
+
+    <div id="customAlert" class="alert-box"></div>
+  </div>
+
+  <script>
+    const imageInput = document.getElementById("imageInput");
+    const profilePreview = document.getElementById("profilePreview");
+    const nicknameInput = document.getElementById("nickname");
+    const suggestionsBox = document.getElementById("suggestions");
+    const alertBox = document.getElementById("customAlert");
+
+    const placeholderText = "Enter a username";
+    let i = 0;
+    function typePlaceholder() {
+      if (i < placeholderText.length) {
+        nicknameInput.setAttribute("placeholder", placeholderText.substring(0, i + 1));
+        i++;
+        setTimeout(typePlaceholder, 50);
+      }
+    }
+    typePlaceholder();
+
+    imageInput.addEventListener("change", function (event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          profilePreview.style.backgroundImage = `url('${e.target.result}')`;
+          profilePreview.setAttribute('data-image', e.target.result);
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    nicknameInput.addEventListener("blur", function () {
+      const enteredName = nicknameInput.value.trim();
+      const users = JSON.parse(localStorage.getItem("users") || "{}");
+
+      if (users[enteredName]) {
+        const user = users[enteredName];
+        profilePreview.style.backgroundImage = `url('${user.profileImage}')`;
+        document.querySelector(`input[name="gender"][value="${user.gender}"]`).checked = true;
+        profilePreview.setAttribute('data-image', user.profileImage);
+      }
+    });
+
+    function handleContinue() {
+      const nickname = nicknameInput.value.trim();
+      const genderEl = document.querySelector('input[name="gender"]:checked');
+
+      if (!nickname || !genderEl) {
+        showAlert("Please enter a nickname and select a gender.");
+        return;
+      }
+
+      const profileImage = profilePreview.getAttribute('data-image') || "";
+      const gender = genderEl.value;
+      const users = JSON.parse(localStorage.getItem("users") || "{}");
+
+      if (users[nickname]) {
+        showAlert("This account already exists!");
+        return;
+      }
+
+      users[nickname] = { profileImage, gender };
+      localStorage.setItem("users", JSON.stringify(users));
+      localStorage.setItem("activeUser", nickname);
+
+      const quizScores = JSON.parse(localStorage.getItem("quizScores") || "{}");
+      if (!(nickname in quizScores)) {
+        quizScores[nickname] = 0;
+        localStorage.setItem("quizScores", JSON.stringify(quizScores));
+      }
+
+      localStorage.setItem("quizSessionScore", quizScores[nickname] || 0);
+
+      document.body.style.opacity = 0;
+      setTimeout(() => window.location.href = "home.html", 500);
+    }
+
+    function skip() {
+      const users = JSON.parse(localStorage.getItem("users") || "{}");
+      users["Guest"] = { profileImage: "", gender: "Unknown" };
+      localStorage.setItem("users", JSON.stringify(users));
+      localStorage.setItem("activeUser", "Guest");
+
+      const quizScores = JSON.parse(localStorage.getItem("quizScores") || "{}");
+      localStorage.setItem("quizSessionScore", quizScores["Guest"] || 0);
+
+      document.body.style.opacity = 0;
+      setTimeout(() => window.location.href = "home.html", 500);
+    }
+
+    function showAlert(message) {
+      alertBox.textContent = message;
+      alertBox.style.display = "block";
+      setTimeout(() => alertBox.style.display = "none", 3000);
+    }
+
+    function showSuggestions() {
+      const input = nicknameInput.value.toLowerCase();
+      const users = JSON.parse(localStorage.getItem("users") || "{}");
+      suggestionsBox.innerHTML = "";
+
+      Object.keys(users).forEach(name => {
+        if (name.toLowerCase().includes(input) && input !== "") {
+          const div = document.createElement("div");
+          div.innerHTML = `<span>${name}</span>
+            <button class="remove-btn" onclick="removeUser('${name}', event)">❌</button>`;
+          div.onclick = (e) => {
+            if (e.target.tagName !== "BUTTON") {
+              localStorage.setItem("activeUser", name);
+              const quizScores = JSON.parse(localStorage.getItem("quizScores") || "{}");
+              localStorage.setItem("quizSessionScore", quizScores[name] || 0);
+              document.body.style.opacity = 0;
+              setTimeout(() => window.location.href = "home.html", 500);
+            }
+          };
+          suggestionsBox.appendChild(div);
+        }
+      });
+    }
+
+    function removeUser(name, event) {
+      event.stopPropagation();
+      const users = JSON.parse(localStorage.getItem("users") || "{}");
+      delete users[name];
+      localStorage.setItem("users", JSON.stringify(users));
+
+      const quizScores = JSON.parse(localStorage.getItem("quizScores") || "{}");
+      delete quizScores[name];
+      localStorage.setItem("quizScores", JSON.stringify(quizScores));
+
+      showSuggestions();
+    }
+  </script>
+</body>
+</html>

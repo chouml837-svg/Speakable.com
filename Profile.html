@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Profile 2025</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+    body {
+      background: linear-gradient(to right, #e1f5fe, #fff3e0);
+      min-height: 100vh;
+      padding: 16px;
+    }
+    .container {
+      max-width: 800px;
+      margin: auto;
+    }
+    .profile-header {
+      background-color: #ffffff;
+      padding: 20px;
+      margin-top: 20px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      border-radius: 12px;
+    }
+    .profile-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background-color: #cfd8dc;
+      background-size: cover;
+      background-position: center;
+      cursor: pointer;
+      border: 2px solid #6d4c41;
+    }
+    .name-gender {
+      display: flex;
+      flex-direction: column;
+    }
+    .name {
+      font-size: 20px;
+      font-weight: 600;
+    }
+    .gender {
+      font-size: 14px;
+      color: #666;
+    }
+    .edit-button-top button {
+      padding: 8px 16px;
+      background-color: #6d4c41;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .edit-button-top button:hover {
+      background-color: #4e342e;
+    }
+    .stats-container {
+      display: flex;
+      justify-content: space-around;
+      background-color: #fdecea;
+      margin: 20px 0;
+      padding: 10px 0;
+      border-radius: 10px;
+      flex-wrap: wrap;
+    }
+    .stat {
+      text-align: center;
+      flex: 1;
+    }
+    .stat span {
+      display: block;
+      font-size: 18px;
+      font-weight: bold;
+      color: #5d4037;
+    }
+    .section h3 {
+      margin-bottom: 10px;
+      font-size: 18px;
+      color: #5d4037;
+      text-align: center;
+    }
+    .book-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      justify-items: center;
+    }
+    .book-card {
+      width: 140px;
+      height: 200px;
+      background-color: #ffe0b2;
+      border-radius: 10px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .book-card img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+    }
+    .book-card span {
+      padding: 4px;
+      font-size: 14px;
+      font-weight: 500;
+      text-align: center;
+    }
+
+    .edit-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      backdrop-filter: blur(4px);
+      background-color: rgba(0,0,0,0.3);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .edit-modal {
+      background: white;
+      padding: 20px;
+      width: 90%;
+      max-width: 350px;
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+      animation: slideIn 0.3s ease-out;
+    }
+    @keyframes slideIn {
+      from { transform: translateY(50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .edit-modal h3 {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    .edit-modal label {
+      display: block;
+      margin-top: 10px;
+      font-weight: 500;
+    }
+    .edit-modal input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 4px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    .edit-modal button {
+      margin-top: 16px;
+      width: 100%;
+      padding: 10px;
+      background-color: #6d4c41;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .edit-modal button:hover {
+      background-color: #4e342e;
+    }
+    #avatarInput {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="profile-header">
+      <div class="profile-info">
+        <div class="avatar" id="avatar" onclick="document.getElementById('avatarInput').click()"></div>
+        <input type="file" id="avatarInput" accept="image/*" onchange="uploadAvatar(event)" />
+        <div class="name-gender">
+          <div class="name" id="displayName">Guest</div>
+          <div class="gender" id="displayGender">Unknown</div>
+        </div>
+      </div>
+      <div class="edit-button-top">
+        <button onclick="openEditModal()">Edit Profile</button>
+      </div>
+    </div>
+
+    <div class="stats-container">
+      <div class="stat"><span id="bookCount">0</span>Books Read</div>
+      <div class="stat"><span id="readingTime">0m</span>Reading Time</div>
+      <div class="stat"><span id="quizScore">0</span>Quiz Score</div>
+    </div>
+
+    <div class="section books-read">
+      <h3>Books Read</h3>
+      <div class="book-grid" id="bookGrid"></div>
+    </div>
+  </div>
+
+  <div class="edit-overlay" id="editOverlay">
+    <div class="edit-modal">
+      <h3>Edit Profile</h3>
+      <label for="editName">Nickname</label>
+      <input type="text" id="editName" />
+      <label for="editGender">Gender</label>
+      <input type="text" id="editGender" />
+      <button onclick="saveProfile()">Save</button>
+    </div>
+  </div>
+
+  <script>
+    const activeUser = localStorage.getItem('activeUser');
+    const users = JSON.parse(localStorage.getItem('users') || '{}');
+
+    let nickname = 'Guest';
+    let gender = 'Unknown';
+    let image = '';
+    let books = [];
+    let readingMs = 0;
+
+    if (activeUser && users[activeUser]) {
+      const user = users[activeUser];
+      nickname = user.nickname || activeUser;
+      gender = user.gender || 'Unknown';
+      image = user.profileImage || '';
+      books = user.booksRead || [];
+      readingMs = parseInt(user.totalReadingTime || '0');
+    }
+
+    const displayNameEl = document.getElementById('displayName');
+    const displayGenderEl = document.getElementById('displayGender');
+    const avatarEl = document.getElementById('avatar');
+    const bookGrid = document.getElementById('bookGrid');
+    const bookCountEl = document.getElementById('bookCount');
+    const readingTimeEl = document.getElementById('readingTime');
+    const quizScoreEl = document.getElementById('quizScore');
+
+    if (displayNameEl) displayNameEl.textContent = nickname;
+    if (displayGenderEl) displayGenderEl.textContent = gender;
+    if (image && avatarEl) avatarEl.style.backgroundImage = `url('${image}')`;
+    if (bookCountEl) bookCountEl.textContent = books.length;
+
+    if (bookGrid) {
+      if (books.length === 0) {
+        bookGrid.innerHTML = "<p style='text-align:center;'>No books read yet.</p>";
+      } else {
+        books.forEach(book => {
+          const card = document.createElement('div');
+          card.className = 'book-card';
+          card.innerHTML = `
+            <img src="${book.image}" alt="${book.title}" />
+            <span>${book.title}</span>
+          `;
+          bookGrid.appendChild(card);
+        });
+      }
+    }
+
+    function formatReadingTime(ms) {
+      const totalMinutes = Math.floor(ms / 60000);
+      if (ms === 0) return '0m';
+      if (totalMinutes < 60) return `${totalMinutes}m`;
+      const hours = Math.floor(totalMinutes / 60);
+      return `${hours}h`;
+    }
+
+    if (readingTimeEl) readingTimeEl.textContent = formatReadingTime(readingMs);
+
+    const scoresData = JSON.parse(localStorage.getItem('quizScores') || '{}');
+    const userScores = scoresData[activeUser] || [];
+
+    if (quizScoreEl) {
+      if (userScores.length === 0) {
+        quizScoreEl.textContent = "No quiz score yet";
+      } else {
+        const totalScore = userScores.reduce((sum, score) => sum + score, 0);
+        quizScoreEl.textContent = `Total Score: ${totalScore.toFixed(1)}/10`;
+      }
+    }
+
+    function openEditModal() {
+      document.getElementById('editOverlay').style.display = 'flex';
+      document.getElementById('editName').value = nickname;
+      document.getElementById('editGender').value = gender;
+    }
+
+    function saveProfile() {
+      const newName = document.getElementById('editName').value.trim();
+      const newGender = document.getElementById('editGender').value.trim();
+
+      if (activeUser && users[activeUser]) {
+        users[activeUser].nickname = newName;
+        users[activeUser].gender = newGender;
+        localStorage.setItem('users', JSON.stringify(users));
+        displayNameEl.textContent = newName || activeUser;
+        displayGenderEl.textContent = newGender || 'Unknown';
+        nickname = newName || activeUser;
+        gender = newGender || 'Unknown';
+      }
+
+      document.getElementById('editOverlay').style.display = 'none';
+    }
+
+    function uploadAvatar(event) {
+      const file = event.target.files[0];
+      if (file && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const imageUrl = e.target.result;
+          avatarEl.style.backgroundImage = `url('${imageUrl}')`;
+          if (activeUser && users[activeUser]) {
+            users[activeUser].profileImage = imageUrl;
+            localStorage.setItem('users', JSON.stringify(users));
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+  </script>
+</body>
+</html>
