@@ -1,8 +1,8 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Quiz</title>
   <style>
     body {
@@ -11,6 +11,8 @@
       margin: auto;
       padding: 20px;
       background-color: #f8f1e4;
+      font-size: 16px;
+      line-height: 1.5;
     }
 
     .question {
@@ -28,6 +30,8 @@
       padding: 10px;
       border-radius: 10px;
       margin-top: 5px;
+      resize: vertical;
+      font-size: 1rem;
     }
 
     .options label {
@@ -62,9 +66,12 @@
       display: none;
       z-index: 1001;
       box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-      width: 90%;
+      width: 90vw;
       max-width: 500px;
+      max-height: 80vh;
+      overflow-y: auto;
       text-align: center;
+      font-size: 1rem;
     }
 
     .blur-overlay {
@@ -88,6 +95,7 @@
       cursor: pointer;
       margin-top: 10px;
       border-radius: 5px;
+      width: auto;
     }
 
     button:hover {
@@ -100,6 +108,29 @@
 
     .btn-secondary:hover {
       background-color: #5a6268;
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 15px;
+        font-size: 14px;
+      }
+
+      textarea {
+        width: 100%;
+        font-size: 14px;
+      }
+
+      button {
+        width: 100%;
+        font-size: 14px;
+      }
+
+      #resultOverlay {
+        width: 95vw;
+        padding: 15px;
+        font-size: 14px;
+      }
     }
   </style>
 </head>
