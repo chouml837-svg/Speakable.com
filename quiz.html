@@ -32,24 +32,23 @@
     }
 
     .box-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
-      grid-template-rows: repeat(2, auto);
+      display: flex;
+      flex-wrap: wrap;
       gap: 10px;
-      width: 100%;
-      max-height: 1000px; 
-      overflow-y: auto; 
-      justify-items: center;
+      justify-content: center;
+      max-width: 1000px;
+      max-height: 1000px;
+      overflow-y: auto;
     }
 
     .box {
       width: 180px;
       height: 230px;
       background-color: #fff8e1;
-      border-radius: 10px;
+      border-radius: 20px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       cursor: pointer;
-      transition: transform 0.3s;
+      transition: transform 0.3s, background-color 0.3s;
       overflow: hidden;
       display: flex;
       flex-direction: column;
@@ -88,7 +87,7 @@
       font-size: 16px;
       background: linear-gradient(to right, #795548, #d7b899);
       color: white;
-      border:;
+      border: none;
       border-radius: 6px;
       cursor: pointer;
     }
@@ -113,7 +112,7 @@
         <div class="box-title">Quiz Necklace</div>
       </div>
       <div class="box" onclick="location.href='brother.html'">
-        <img src="leon.jpeg" alt="quiz 3">
+        <img src="Leon.jpeg" alt="quiz 3">
         <div class="box-title">Quiz Brother Leon</div>
       </div>
       <div class="box" onclick="location.href='small key.html'">
